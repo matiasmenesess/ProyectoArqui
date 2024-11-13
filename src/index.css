@@ -1,0 +1,65 @@
+/* Estilo para los campos de entrada con error */
+input:invalid {
+  border: 2px solid red; /* Bordes rojos para campos inválidos */
+}
+
+/* Estilo para los mensajes de error */
+.errorText {
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  text-align: left;
+}
+
+/* Estilo común para el Box contenedor */
+.commonBox {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-color: #f3f4f6;
+}
+
+/* Estilo común para el Card */
+.commonCard {
+  width: 100%;
+  max-width: 400px;
+  padding: 2rem;
+  background-color: white;
+  border-radius: 0px; /* Bordes rectos */
+  box-shadow: 3px 3px 6px rgba(0, 0, 0, 0.1);
+  margin-top: 10rem;
+}
+
+/* Estilo para los encabezados */
+.commonHeader {
+  font-family: 'Poppins', sans-serif;
+  color: #1f2937;
+  font-weight: 600;
+  margin-bottom: 2rem;
+}
+
+/* Estilo para los botones */
+.commonButton {
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  border-radius: 50px;
+  text-transform: none;
+  margin-bottom: 1.5rem;
+  width: 100%;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Hover de los botones */
+.commonButton:hover {
+  background-color: #e31c22;
+  color: white;
+  border-color: #e31c22;
+}
+
+.commonButton .MuiSvgIcon-root {
+  color: white;
+}

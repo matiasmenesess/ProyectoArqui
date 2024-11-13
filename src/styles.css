@@ -1,0 +1,24 @@
+/* src/styles.css */
+
+/* Estilo del botón */
+.commonButton {
+  width: 100%;
+  font-family: 'Poppins', sans-serif;
+  font-weight: bold;
+  border-radius: 50px;
+  text-transform: none;
+  margin-bottom: 1.5rem;
+  border: 2px solid #e31c22; /* Color del borde */
+  transition: background-color 0.3s, color 0.3s;
+}
+
+/* Estilo para el hover */
+.commonButton:hover {
+  background-color: #e31c22; /* Color de fondo al hacer hover */
+  color: white;
+  border-color: #e31c22;
+}
+
+.commonButton .MuiSvgIcon-root {
+  color: white;
+}
