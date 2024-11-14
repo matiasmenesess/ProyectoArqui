@@ -21,6 +21,7 @@ module alu (
             3'b111: ALUResult = SrcC + (SrcA * SrcB); // MLA
             3'b1000: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
             3'b1001: ALUResult = SrcB - SrcA;           // RSB
+            3'b1010: ALUResult = SrcA + SrcB + CarryIn;
             default: ALUResult = 32'b0;
         endcase
     end
