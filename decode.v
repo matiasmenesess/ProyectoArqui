@@ -57,6 +57,8 @@ module decode (
                 4'b1001: ALUControl = 3'b110; // MUL
                 4'b1010: ALUControl = 3'b111; // MLA
                 4'b1011: ALUControl = 3'b101; // MLS
+                4'b0011: ALUControl = 3'b1000; // SBC
+                4'b0111: ALUControl = 3'b1001; // RSB
                 default: ALUControl = 3'bxxx;
             endcase
             FlagW[1] = Funct[0];
