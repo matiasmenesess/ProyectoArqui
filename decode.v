@@ -49,11 +49,14 @@ module decode (
     always @(*)
         if (ALUOp) begin
             case (Funct[4:1])
-                4'b1101: ALUControl = 3'b010;
-                4'b0100: ALUControl = 3'b000;
-                4'b0010: ALUControl = 3'b001;
-                4'b0000: ALUControl = 3'b011;
-                4'b1100: ALUControl = 3'b100;
+                4'b1101: ALUControl = 3'b010; // MOV
+                4'b0100: ALUControl = 3'b000; // ADD
+                4'b0010: ALUControl = 3'b001; // SUB
+                4'b0000: ALUControl = 3'b011; // AND
+                4'b1100: ALUControl = 3'b100; // ORR
+                4'b1001: ALUControl = 3'b110; // MUL
+                4'b1010: ALUControl = 3'b111; // MLA
+                4'b1011: ALUControl = 3'b101; // MLS
                 default: ALUControl = 3'bxxx;
             endcase
             FlagW[1] = Funct[0];
