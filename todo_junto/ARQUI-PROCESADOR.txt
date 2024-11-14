@@ -278,6 +278,7 @@ module decode (
                 4'b1011: ALUControl = 3'b101; // MLS
                 4'b0011: ALUControl = 3'b1000; // SBC
                 4'b0111: ALUControl = 3'b1001; // RSB
+                4'b0101: ALUControl = 3'b1010; // ADC
                 default: ALUControl = 3'bxxx;
             endcase
             FlagW[1] = Funct[0];
@@ -638,6 +639,7 @@ module alu (
             3'b111: ALUResult = SrcC + (SrcA * SrcB); // MLA
             3'b1000: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
             3'b1001: ALUResult = SrcB - SrcA;           // RSB
+            3'b1010: ALUResult = SrcA + SrcB + CarryIn; //ADC
             default: ALUResult = 32'b0;
         endcase
     end
@@ -650,4 +652,3 @@ module alu (
     assign overflow = (ALUControl[1] == 1'b0) & ~(SrcA[31] ^ SrcB[31] ^ ALUControl[0]) & (SrcA[31] ^ sum[31]);
     assign ALUFlags = {neg, zero, carry, overflow};
 endmodule
-
