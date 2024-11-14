@@ -12,12 +12,22 @@ module alu (
             3'b010: ALUResult = SrcA & SrcB;
             3'b011: ALUResult = SrcA | SrcB;
             3'b100: ALUResult = SrcA ^ SrcB;
+            3'b101: begin
+                ALUResult = SrcA - SrcB;
+                ALUFlags[0] = (ALUResult == 0);
+                ALUFlags[1] = ALUResult[31];
+            end
+            3'b110: begin
+                ALUResult = SrcA & SrcB;
+                ALUFlags[0] = (ALUResult == 0);
+                ALUFlags[1] = ALUResult[31];
+            end
+            3'b111: begin
+                ALUResult = SrcA ^ SrcB;
+                ALUFlags[0] = (ALUResult == 0);
+                ALUFlags[1] = ALUResult[31];
+            end
             default: ALUResult = 32'b0;
         endcase
-        
-        ALUFlags[0] = (ALUResult == 0);
-        ALUFlags[1] = ALUResult[31];
-        ALUFlags[2] = 0;
-        ALUFlags[3] = 0;
     end
 endmodule
