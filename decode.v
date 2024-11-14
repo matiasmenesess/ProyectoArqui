@@ -59,6 +59,7 @@ module decode (
                 4'b1011: ALUControl = 3'b101; // MLS
                 4'b0011: ALUControl = 3'b1000; // SBC
                 4'b0111: ALUControl = 3'b1001; // RSB
+                4'b0101: ALUControl = 3'b1010; // ADC
                 default: ALUControl = 3'bxxx;
             endcase
             FlagW[1] = Funct[0];
