@@ -3,6 +3,7 @@ module alu (
     input wire [31:0] SrcB,
     input wire [31:0] SrcC, 
     input wire [2:0] ALUControl,
+    input wire CarryIn,  
     output reg [31:0] ALUResult,
     output reg [3:0] ALUFlags
 );
@@ -18,6 +19,8 @@ module alu (
             3'b101: ALUResult = SrcC - (SrcA * SrcB); // MLS
             3'b110: ALUResult = SrcA * SrcB;       // MUL
             3'b111: ALUResult = SrcC + (SrcA * SrcB); // MLA
+            3'b1000: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
+            3'b1001: ALUResult = SrcB - SrcA;           // RSB
             default: ALUResult = 32'b0;
         endcase
     end
