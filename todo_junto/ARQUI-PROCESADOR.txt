@@ -268,11 +268,14 @@ module decode (
     always @(*)
         if (ALUOp) begin
             case (Funct[4:1])
-                4'b1101: ALUControl = 3'b010;
-                4'b0100: ALUControl = 3'b000;
-                4'b0010: ALUControl = 3'b001;
-                4'b0000: ALUControl = 3'b011;
-                4'b1100: ALUControl = 3'b100;
+                4'b1101: ALUControl = 3'b010; // MOV
+                4'b0100: ALUControl = 3'b000; // ADD
+                4'b0010: ALUControl = 3'b001; // SUB
+                4'b0000: ALUControl = 3'b011; // AND
+                4'b1100: ALUControl = 3'b100; // ORR
+                4'b1001: ALUControl = 3'b110; // MUL
+                4'b1010: ALUControl = 3'b111; // MLA
+                4'b1011: ALUControl = 3'b101; // MLS
                 default: ALUControl = 3'bxxx;
             endcase
             FlagW[1] = Funct[0];
@@ -589,6 +592,7 @@ endmodule
 module alu (
     input wire [31:0] SrcA,
     input wire [31:0] SrcB,
+    input wire [31:0] SrcC, 
     input wire [2:0] ALUControl,
     output reg [31:0] ALUResult,
     output reg [3:0] ALUFlags
@@ -602,7 +606,9 @@ module alu (
             3'b010: ALUResult = SrcB;
             3'b011: ALUResult = SrcA & SrcB;
             3'b100: ALUResult = SrcA | SrcB;
-            3'b101: ALUResult = SrcA ^ SrcB;
+            3'b101: ALUResult = SrcC - (SrcA * SrcB); //MLS (para no olvidarme)
+            3'b110: ALUResult = SrcA * SrcB;       // MUL 
+            3'b111: ALUResult = SrcC + (SrcA * SrcB); // MLA
             default: ALUResult = 32'b0;
         endcase
     end
