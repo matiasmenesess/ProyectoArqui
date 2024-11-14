@@ -597,7 +597,6 @@ module alu (
             default: ALUResult = 32'b0;
         endcase
         
-        // Flags
         ALUFlags[0] = (ALUResult == 0);
         ALUFlags[1] = ALUResult[31];
         ALUFlags[2] = 0;
