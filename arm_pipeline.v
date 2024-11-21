@@ -49,63 +49,70 @@ endmodule
 
 
 module arm (
-	clk,
-	reset,
-	PC,
-	Instr,
-	MemWrite,
-	ALUResult,
-	WriteData,
-	ReadData
+    clk,
+    reset,
+    PC,
+    Instr,
+    MemWrite,
+    ALUResult,
+    WriteData,
+    ReadData
 );
-	input wire clk;
-	input wire reset;
-	output wire [31:0] PC;
-	input wire [31:0] Instr;
-	output wire MemWrite;
-	output wire [31:0] ALUResult;
-	output wire [31:0] WriteData;
-	input wire [31:0] ReadData;
-	wire [3:0] ALUFlags;
-	wire RegWrite;
-	wire ALUSrc;
-	wire MemtoReg;
-	wire PCSrc;
-	wire [1:0] RegSrc;
-	wire [1:0] ImmSrc;
-	wire [1:0] ALUControl;
-	controller c(
-		.clk(clk),
-		.reset(reset),
-		.Instr(Instr[31:12]),
-		.ALUFlags(ALUFlags),
-		.RegSrc(RegSrc),
-		.RegWrite(RegWrite),
-		.ImmSrc(ImmSrc),
-		.ALUSrc(ALUSrc),
-		.ALUControl(ALUControl),
-		.MemWrite(MemWrite),
-		.MemtoReg(MemtoReg),
-		.PCSrc(PCSrc)
-	);
-	datapath dp(
-		.clk(clk),
-		.reset(reset),
-		.RegSrc(RegSrc),
-		.RegWrite(RegWrite),
-		.ImmSrc(ImmSrc),
-		.ALUSrc(ALUSrc),
-		.ALUControl(ALUControl),
-		.MemtoReg(MemtoReg),
-		.PCSrc(PCSrc),
-		.ALUFlags(ALUFlags),
-		.PC(PC),
-		.Instr(Instr),
-		.ALUResult(ALUResult),
-		.WriteData(WriteData),
-		.ReadData(ReadData)
-	);
+    input wire clk;
+    input wire reset;
+    output wire [31:0] PC;
+    input wire [31:0] Instr;
+    output wire MemWrite;
+    output wire [31:0] ALUResult;
+    output wire [31:0] WriteData;
+    input wire [31:0] ReadData;
+
+    wire [3:0] ALUFlags;
+    wire RegWrite;
+    wire ALUSrc;
+    wire MemtoReg;
+    wire PCSrc;
+    wire [1:0] RegSrcD;
+    wire [1:0] ImmSrc;
+    wire [3:0] ALUControl;
+
+    controller c(
+        .clk(clk),
+        .reset(reset),
+        .Instr(Instr[31:12]),
+        .ALUFlags(ALUFlags),
+        .RegSrcD(RegSrcD),
+        .RegWriteW(RegWrite),
+        .ImmSrcD(ImmSrc),
+        .ALUSrcE(ALUSrc),
+        .ALUControlE(ALUControl),
+        .MemWriteM(MemWrite),
+        .MemtoRegW(MemtoReg),
+        .PCSrcW(PCSrc)
+    );
+
+    datapath dp(
+        .clk(clk),
+        .reset(reset),
+        .RegSrc(RegSrc),
+        .RegWrite(RegWrite),
+        .ImmSrc(ImmSrc),
+        .ALUSrc(ALUSrc),
+        .ALUControl(ALUControl),
+        .MemtoReg(MemtoReg),
+        .PCSrc(PCSrc),
+        .ALUFlags(ALUFlags),
+        .PC(PC),
+        .Instr(Instr),
+        .ALUResult(ALUResult),
+        .WriteData(WriteData),
+        .ReadData(ReadData)
+    );
 endmodule
+
+
+
+
 module condcheck (
 	Cond,
 	Flags,
@@ -319,7 +326,7 @@ module control_unit (
 	output wire RegWriteD;
 	output wire MemtoRegD;
 	output wire MemWriteD;
-	output wire [1:0] ALUControlD;
+	output wire [3:0] ALUControlD;
 	output wire BranchD;
 	output wire ALUSrcD;
 	output wire [1:0] FlagWriteD;
@@ -366,7 +373,7 @@ module datapath (
     input wire RegWrite;
     input wire [1:0] ImmSrc;
     input wire ALUSrc;
-    input wire [2:0] ALUControl;
+    input wire [3:0] ALUControl;
     input wire MemtoReg;
     input wire PCSrc;
     output wire [3:0] ALUFlags;
@@ -382,16 +389,15 @@ module datapath (
     wire [31:0] ExtImm;
     wire [31:0] SrcA;
     wire [31:0] SrcB;
-    wire [31:0] SrcC;          // Nuevo operando SrcC para MLA y MLS
+    wire [31:0] SrcC;          
     wire [31:0] Result;
     wire [3:0] RA1;
     wire [3:0] RA2;
 
-    // CarryIn, necesario para operaciones SBC
     wire CarryIn;
-    assign CarryIn = ALUFlags[2];  // Utiliza el bit de carry de la última operación
+    assign CarryIn = ALUFlags[2];  
 
-    // Calcular siguiente PC
+    
     mux2 #(32) pcmux(
         .d0(PCPlus4),
         .d1(Result),
@@ -418,7 +424,6 @@ module datapath (
         .y(PCPlus8)
     );
 
-    // Definir los registros de origen
     mux2 #(4) ra1mux(
         .d0(Instr[19:16]),
         .d1(4'b1111),
@@ -445,9 +450,8 @@ module datapath (
         .rd2(WriteData)
     );
 
-    // Conectar SrcC como el tercer operando
-    assign SrcC = PCPlus8;  // Ajuste para obtener el tercer operando de MLA/MLS si es necesario
-
+    assign SrcC = PCPlus8;  
+    
     mux2 #(32) resmux(
         .d0(ALUResult),
         .d1(ReadData),
