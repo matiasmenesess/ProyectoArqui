@@ -16,7 +16,7 @@ module control_unit (
 	output wire RegWriteD;
 	output wire MemtoRegD;
 	output wire MemWriteD;
-	output wire [1:0] ALUControlD;
+	output wire [3:0] ALUControlD;
 	output wire BranchD;
 	output wire ALUSrcD;
 	output wire [1:0] FlagWriteD;
