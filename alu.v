@@ -2,26 +2,26 @@ module alu (
     input wire [31:0] SrcA,
     input wire [31:0] SrcB,
     input wire [31:0] SrcC, 
-    input wire [2:0] ALUControl,
+    input wire [3:0] ALUControl,
     input wire CarryIn,  
     output reg [31:0] ALUResult,
-    output reg [3:0] ALUFlags
+    output  [3:0] ALUFlags
 );
     wire [32:0] sum;  
 
     always @(*) begin
         case (ALUControl)
-            3'b000: ALUResult = SrcA + SrcB;       // ADD
-            3'b001: ALUResult = SrcA - SrcB;       // SUB
-            3'b010: ALUResult = SrcB;              // MOV
-            3'b011: ALUResult = SrcA & SrcB;       // AND
-            3'b100: ALUResult = SrcA | SrcB;       // ORR
-            3'b101: ALUResult = SrcC - (SrcA * SrcB); // MLS
-            3'b110: ALUResult = SrcA * SrcB;       // MUL
-            3'b111: ALUResult = SrcC + (SrcA * SrcB); // MLA
-            3'b1000: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
-            3'b1001: ALUResult = SrcB - SrcA;           // RSB
-            3'b1010: ALUResult = SrcA + SrcB + CarryIn; //ADC
+            4'b0000: ALUResult = SrcA + SrcB;       // ADD
+            4'b0001: ALUResult = SrcA - SrcB;       // SUB
+            4'b0010: ALUResult = SrcB;              // MOV
+            4'b0011: ALUResult = SrcA & SrcB;       // AND
+            4'b0100: ALUResult = SrcA | SrcB;       // ORR
+            4'b0101: ALUResult = SrcC - (SrcA * SrcB); // MLS
+            4'b0110: ALUResult = SrcA * SrcB;       // MUL
+            4'b0111: ALUResult = SrcC + (SrcA * SrcB); // MLA
+            4'b1000: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
+            4'b1001: ALUResult = SrcB - SrcA;           // RSB
+            4'b1010: ALUResult = SrcA + SrcB + CarryIn; //ADC
             default: ALUResult = 32'b0;
         endcase
     end
