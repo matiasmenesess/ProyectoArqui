@@ -1,132 +1,68 @@
-module datapath (
-    clk,
-    reset,
-    RegSrc,
-    RegWrite,
-    ImmSrc,
-    ALUSrc,
-    ALUControl,
-    MemtoReg,
-    PCSrc,
-    ALUFlags,
-    PC,
-    Instr,
-    ALUResult,
-    WriteData,
-    ReadData
+module decode (
+	Op,
+	Funct,
+	Rd,
+	FlagW,
+	PCS,
+	RegW,
+	MemW,
+	MemtoReg,
+	ALUSrc,
+	ImmSrc,
+	RegSrc,
+	ALUControl,
+	Branch
 );
-    input wire clk;
-    input wire reset;
-    input wire [1:0] RegSrc;
-    input wire RegWrite;
-    input wire [1:0] ImmSrc;
-    input wire ALUSrc;
-    input wire [3:0] ALUControl;
-    input wire MemtoReg;
-    input wire PCSrc;
-    output wire [3:0] ALUFlags;
-    output wire [31:0] PC;
-    input wire [31:0] Instr;
-    output wire [31:0] ALUResult;
-    output wire [31:0] WriteData;
-    input wire [31:0] ReadData;
-
-    wire [31:0] PCNext;
-    wire [31:0] PCPlus4;
-    wire [31:0] PCPlus8;
-    wire [31:0] ExtImm;
-    wire [31:0] SrcA;
-    wire [31:0] SrcB;
-    wire [31:0] SrcC;          
-    wire [31:0] Result;
-    wire [3:0] RA1;
-    wire [3:0] RA2;
-
-    wire CarryIn;
-    assign CarryIn = ALUFlags[2];  
-
-    
-    mux2 #(32) pcmux(
-        .d0(PCPlus4),
-        .d1(Result),
-        .s(PCSrc),
-        .y(PCNext)
-    );
-
-    flopr #(32) pcreg(
-        .clk(clk),
-        .reset(reset),
-        .d(PCNext),
-        .q(PC)
-    );
-
-    adder #(32) pcadd1(
-        .a(PC),
-        .b(32'b100),
-        .y(PCPlus4)
-    );
-
-    adder #(32) pcadd2(
-        .a(PCPlus4),
-        .b(32'b100),
-        .y(PCPlus8)
-    );
-
-    mux2 #(4) ra1mux(
-        .d0(Instr[19:16]),
-        .d1(4'b1111),
-        .s(RegSrc[0]),
-        .y(RA1)
-    );
-
-    mux2 #(4) ra2mux(
-        .d0(Instr[3:0]),
-        .d1(Instr[15:12]),
-        .s(RegSrc[1]),
-        .y(RA2)
-    );
-
-    regfile rf(
-        .clk(clk),
-        .we3(RegWrite),
-        .ra1(RA1),
-        .ra2(RA2),
-        .wa3(Instr[15:12]),
-        .wd3(Result),
-        .r15(PCPlus8),
-        .rd1(SrcA),
-        .rd2(WriteData)
-    );
-
-    assign SrcC = PCPlus8;  
-    
-    mux2 #(32) resmux(
-        .d0(ALUResult),
-        .d1(ReadData),
-        .s(MemtoReg),
-        .y(Result)
-    );
-
-    extend ext(
-        .Instr(Instr[23:0]),
-        .ImmSrc(ImmSrc),
-        .ExtImm(ExtImm)
-    );
-
-    mux2 #(32) srcbmux(
-        .d0(WriteData),
-        .d1(ExtImm),
-        .s(ALUSrc),
-        .y(SrcB)
-    );
-
-    alu alu_inst(
-        .SrcA(SrcA),
-        .SrcB(SrcB),
-        .SrcC(SrcC),            
-        .ALUControl(ALUControl),
-        .CarryIn(CarryIn),      
-        .ALUResult(ALUResult),
-        .ALUFlags(ALUFlags)
-    );
+	input wire [1:0] Op;
+	input wire [5:0] Funct;
+	input wire [3:0] Rd;
+	output reg [1:0] FlagW;
+	output wire PCS;
+	output wire RegW;
+	output wire MemW;
+	output wire MemtoReg;
+	output wire ALUSrc;
+	output wire [1:0] ImmSrc;
+	output wire [1:0] RegSrc;
+	output reg [1:0] ALUControl;
+	reg [9:0] controls;
+	output wire Branch;
+	wire ALUOp;
+	always @(*)
+		casex (Op)
+			2'b00:
+				if (Funct[5])
+					controls = 10'b0000101001;
+				else
+					controls = 10'b0000001001;
+			2'b01:
+				if (Funct[0])
+					controls = 10'b0001111000;
+				else
+					controls = 10'b1001110100;
+			2'b10: controls = 10'b0110100010;
+			default: controls = 10'bxxxxxxxxxx;
+		endcase
+	assign {RegSrc, ImmSrc, ALUSrc, MemtoReg, RegW, MemW, Branch, ALUOp} = controls;
+	assign RegW = controls[3];
+	assign MemW = controls[2];
+	
+	
+	always @(*)
+		if (ALUOp) begin
+			case (Funct[4:1])
+				4'b0100: ALUControl = 2'b00;
+				4'b0010: ALUControl = 2'b01;
+				4'b0000: ALUControl = 2'b10;
+				4'b1100: ALUControl = 2'b11;
+				default: ALUControl = 2'bxx;
+			endcase
+			FlagW[1] = Funct[0];
+			FlagW[0] = Funct[0] & ((ALUControl == 2'b00) | (ALUControl == 2'b01));
+		end
+		else begin
+			ALUControl = 2'b00;
+			FlagW = 2'b00;
+		end
+	assign PCS = ((Rd == 4'b1111) & RegW) | Branch;
 endmodule
