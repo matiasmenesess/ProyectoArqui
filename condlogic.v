@@ -9,7 +9,11 @@ module condlogic (
 	MemW,
 	PCSrc,
 	RegWrite,
-	MemWrite
+	MemWrite,
+	Branch,
+	BranchTakenE,
+	FlagsE,
+	FlagsNext
 );
 	input wire clk;
 	input wire reset;
@@ -19,9 +23,13 @@ module condlogic (
 	input wire PCS;
 	input wire RegW;
 	input wire MemW;
+	input wire Branch;
+	input wire [3:0] FlagsE;
 	output wire PCSrc;
 	output wire RegWrite;
 	output wire MemWrite;
+	output wire BranchTakenE;
+	output wire [3:0] FlagsNext;
 	wire [1:0] FlagWrite;
 	wire [3:0] Flags;
 	wire CondEx;
@@ -48,4 +56,7 @@ module condlogic (
 	assign RegWrite = RegW & CondEx;
 	assign MemWrite = MemW & CondEx;
 	assign PCSrc = PCS & CondEx;
+	assign BranchTakenE = Branch & CondEx;
+	assign FlagsNext = Flags;
+	
 endmodule
