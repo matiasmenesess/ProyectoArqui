@@ -11,17 +11,19 @@ module alu (
 
     always @(*) begin
         case (ALUControl)
-            4'b0000: ALUResult = SrcA + SrcB;       // ADD
-            4'b0001: ALUResult = SrcA - SrcB;       // SUB
-            4'b0010: ALUResult = SrcB;              // MOV
-            4'b0011: ALUResult = SrcA & SrcB;       // AND
-            4'b0100: ALUResult = SrcA | SrcB;       // ORR
-            4'b0101: ALUResult = SrcC - (SrcA * SrcB); // MLS
-            4'b0110: ALUResult = SrcA * SrcB;       // MUL
-            4'b0111: ALUResult = SrcC + (SrcA * SrcB); // MLA
-            4'b1000: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
-            4'b1001: ALUResult = SrcB - SrcA;           // RSB
-            4'b1010: ALUResult = SrcA + SrcB + CarryIn; //ADC
+            4'b0000: ALUResult = SrcA + SrcB;            // ADD
+            4'b0001: ALUResult = SrcA - SrcB;            // SUB
+            4'b0010: ALUResult = SrcB;                   // MOV
+            4'b0011: ALUResult = SrcA & SrcB;            // AND
+            4'b0100: ALUResult = SrcA | SrcB;            // ORR
+            4'b0101: ALUResult = SrcC - (SrcA * SrcB);   // MLS
+            4'b0110: ALUResult = SrcA ^ SrcB;            // EOR
+            4'b0111: ALUResult = ~SrcB;                  // MVN
+            4'b1000: ALUResult = SrcC + (SrcA * SrcB);   // MLA
+            4'b1001: ALUResult = SrcB - SrcA;            // RSB
+            4'b1010: ALUResult = SrcA + SrcB + CarryIn;  // ADC
+            4'b1011: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
+            4'b1100: ALUResult = SrcA * SrcB;            // MUL
             default: ALUResult = 32'b0;
         endcase
     end
