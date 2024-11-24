@@ -36,20 +36,6 @@ module controller (
     wire PCSrcM, RegWriteM, MemtoRegM;
     wire CondExE;
 
-    control_unit cu (
-        .Instr(Instr),
-        .PCSrcD(PCSrcD),
-        .RegWriteD(RegWriteD),
-        .MemtoRegD(MemtoRegD),
-        .MemWriteD(MemWriteD),
-        .ALUControlD(ALUControlD),
-        .BranchD(BranchD),
-        .ALUSrcD(ALUSrcD),
-        .FlagWriteD(FlagWriteD),
-        .ImmSrcD(ImmSrcD),
-        .RegSrcD(RegSrcD)
-    );
-
     // Etapa D
     flopd D (
         .clk(clk),
@@ -75,15 +61,22 @@ module controller (
         .FlagsE(FlagsE)
     );
 
-    cond_unit CondU (
-        .clk(clk),
-        .reset(reset),
-        .FlagWriteE(FlagWriteE),
-        .CondE(CondE),
-        .FlagsE(FlagsE),
-        .ALUFlags(ALUFlags),
-        .Flags(Flags),
-        .CondExE(CondExE)
+     condlogic cl(
+    		.clk(clk),
+    		.reset(reset),
+    		.Cond(CondE),
+    		.ALUFlags(ALUFlags),
+    		.FlagW(FlagWriteE),
+    		.PCS(PCSrcE),
+    		.RegW(RegWriteE),
+    		.MemW(MemWriteE),
+    		.PCSrc(PCSrcEpostCondLogic),
+    		.RegWrite(RegWriteEpostCondLogic),
+    		.MemWrite(MemWriteEpostCondLogic),
+    		.Branch(BranchE),
+    		.BranchTakenE(BranchTakenE),
+    		.FlagsE(FlagsE),
+    		.FlagsNext(FlagsNext)
     );
 
     flope E (
