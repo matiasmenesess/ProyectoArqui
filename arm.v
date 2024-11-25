@@ -21,7 +21,7 @@ module arm (
 	wire RegWriteW;
 	wire RegWriteM;
 	wire ALUSrc;
-	wire MemtoReg;
+	wire MemtoRegE;
 	wire PCSrc;
 	wire [1:0] RegSrc;
 	wire [1:0] ImmSrc;
