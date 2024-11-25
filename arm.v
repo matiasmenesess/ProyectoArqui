@@ -2,7 +2,7 @@ module arm (
     clk,
     reset,
     PC,
-    Instr,
+    InstrF,
     MemWrite,
     ALUResult,
     WriteData,
