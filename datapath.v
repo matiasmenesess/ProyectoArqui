@@ -38,5 +38,29 @@ module datapath (
         	.PCSrcM(PCSrcM),
 		.MemtoRegE(MemtoRegE)
 	);
+
+	hazard_unit hazard_unit(
+        	.clk(clk), 
+	        .reset(reset), 
+	        .Match_1E_M(Match_1E_M), 
+	        .Match_1E_W(Match_1E_W), 
+	        .Match_2E_M(Match_2E_M), 
+	        .Match_2E_W(Match_2E_W),
+	        .Match_12D_E(Match_12D_E),
+	        .RegWriteM(RegWriteM), 
+	        .RegWriteW(RegWriteW), 
+	        .BranchTakenE(BranchTakenE), 
+	        .MemtoRegE(MemtoRegE),
+	        .PCSrcW(PCSrcW),
+	        .PCSrcE(PCSrcE),
+	        .PCSrcD(PCSrcD),
+	        .PCSrcM(PCSrcM),
+	        .ForwardAE(ForwardAE), 
+	        .ForwardBE(ForwardBE),
+	        .StallD(StallD), 
+	        .StallF(StallF), 
+	        .FlushD(FlushD), 
+	        .FlushE(FlushE)
+    );
 	
 endmodule
