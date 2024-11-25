@@ -56,7 +56,35 @@ module arm (
 	);
 	
 	datapath dp(
-
+		.clk(clk),
+		.reset(reset),
+		.RegSrcD(RegSrc),
+		.RegWriteW(RegWriteW),
+		.ImmSrcD(ImmSrc),
+		.ALUSrcE(ALUSrc),
+		.ALUControlE(ALUControl),
+		.MemtoRegW(MemtoReg),
+		.PCSrcW(PCSrc),
+		.ALUFlags(ALUFlags),
+		.PCF(PC),
+		.InstrF(InstrF),
+		.ALUOutM(ALUResult),
+		.WriteDataE(WriteData),
+		.ReadDataM(ReadData),
+		.ExtImmD(ExtImm), 
+		.BranchTakenE(BranchTakenE),
+		.Match_1E_M(Match_1E_M), 
+        	.Match_1E_W(Match_1E_W), 
+        	.Match_2E_M(Match_2E_M), 
+        	.Match_2E_W(Match_2E_W),
+        	.Match_12D_E(Match_12D_E),
+        	.ForwardAE(ForwardAE), 
+        	.ForwardBE(ForwardBE),
+		.StallF(StallF),
+		.StallD(StallD),
+		.RD1D(RD1D), 
+		.RD2D(RD2D),
+		.FlushE(FlushE)
 	);
 	
 	hazard_unit hazard_unit(
