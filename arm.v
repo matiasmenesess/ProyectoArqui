@@ -25,21 +25,34 @@ module arm (
     wire [1:0] RegSrcD;
     wire [1:0] ImmSrc;
     wire [3:0] ALUControl;
+    wire [31:0] ExtImm;
+	wire BranchTakenE;
+	wire Match_1E_M, Match_1E_W, Match_2E_M, Match_2E_W;
+    wire [1:0] ForwardAE, ForwardBE;
+    wire Match_12D_E, FlushE, StallF, StallD;
+    wire [31:0] RD1D;
+	wire [31:0] RD2D;
 
-    controller c(
-        .clk(clk),
-        .reset(reset),
-        .Instr(Instr[31:12]),
-        .ALUFlags(ALUFlags),
-        .RegSrcD(RegSrcD),
-        .RegWriteW(RegWrite),
-        .ImmSrcD(ImmSrc),
-        .ALUSrcE(ALUSrc),
-        .ALUControlE(ALUControl),
-        .MemWriteM(MemWrite),
-        .MemtoRegW(MemtoReg),
-        .PCSrcW(PCSrc)
-    );
+	controller c(
+		.clk(clk),
+		.reset(reset),
+		.ALUFlags(ALUFlags),
+		.InstrD(InstrF),
+		.BranchTakenE(BranchTakenE),
+		.RegSrcD(RegSrc),
+		.RegWriteW(RegWriteW),
+		.RegWriteM(RegWriteM),
+		.ImmSrcD(ImmSrc),
+		.ALUSrcE(ALUSrc),
+		.ALUControlE(ALUControl),
+		.MemWriteM(MemWrite),
+		.MemtoRegW(MemtoReg),
+		.PCSrcW(PCSrc),
+		.PCSrcE(PCSrcE),
+        .PCSrcD(PCSrcD),
+        .PCSrcM(PCSrcM),
+		.MemtoRegE(MemtoRegE)
+	);
 
     datapath dp(
         .clk(clk),
