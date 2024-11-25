@@ -1,107 +1,126 @@
 module controller (
-    clk,
-    reset,
-    Cond,
-    Instr,
-    ALUFlags,
-    RegSrcD,
-    ImmSrcD,
-    ALUSrcE,
-    ALUControlE,
-    PCSrcW,
-    RegWriteW,
-    MemWriteM,
-    MemtoRegW
+	clk,
+	reset,
+	InstrD,
+	ALUFlags,
+	RegSrcD,
+	RegWriteM,
+	RegWriteW,
+	ImmSrcD,
+	ALUSrcE,
+	ALUControlE,
+	MemWriteM,
+	MemtoRegE,
+	MemtoRegW,
+	PCSrcW, 
+	BranchTakenE,
+	PCSrcD,
+    PCSrcE,
+   	PCSrcM
 );
-    input wire clk;
-    input wire reset;
-    input wire [31:28] Cond;
-    input wire [27:12] Instr;
-    input wire [3:0] ALUFlags;
 
-    output wire [1:0] RegSrcD;
-    output wire [1:0] ImmSrcD;
-    output wire ALUSrcE;
-    output wire [1:0] ALUControlE;
-    output wire PCSrcW;
-    output wire RegWriteW;
-    output wire MemWriteM;
-    output wire MemtoRegW;
+	input wire clk;
+	input wire reset;
+	input wire [31:0] InstrD;
+	input wire [3:0] ALUFlags;
+	output wire [1:0] RegSrcD;
+	output wire RegWriteW;
+	output wire RegWriteM;
+	output wire [1:0] ImmSrcD;
+	output wire ALUSrcE;
+	output wire [1:0] ALUControlE;
+	output wire MemWriteM;
+	output wire MemtoRegW;
+	output wire PCSrcW;
+	output wire PCSrcM;
+	output wire PCSrcE; 
+	output wire PCSrcD;
+	output wire BranchTakenE;
+	output wire MemtoRegE;
+	wire RegWriteD;
+	wire MemWriteD; 
+	wire MemtoRegD;
+	wire ALUSrcD;
+	wire BranchD;
+	wire [1:0] FlagWriteD;
+	wire [1:0] ALUControlD;
+	wire CondPCSrcE;
+	wire RegWriteE;
+	wire CondRegWriteE; //dsp de aplicarle cond logic 
+	wire MemWriteE;
+	wire CondMemWriteE;
+	wire BranchE;
+	wire ALUSrcE;
+	wire [1:0] FlagWriteE;
+	wire [3:0] CondE;
+	wire FlagsE;
+	wire FlagsNext;
+	wire MemtoRegM, MemWriteM; 
+	assign CondE = InstrD[31:28];
 
-    wire PCSrcD, RegWriteD, MemtoRegD, MemWriteD, BranchD, ALUSrcD;
-    wire [1:0] ALUControlD, FlagWriteD;
-    wire [3:0] Flags, CondE, FlagsE;
-    wire PCSrcE, RegWriteE, MemtoRegE, MemWriteE, BranchE;
-    wire [1:0] FlagWriteE;
-    wire PCSrcM, RegWriteM, MemtoRegM;
-    wire CondExE;
+	decode dec (
+		.Op(InstrD[27:26]),
+		.Funct(InstrD[25:20]),
+		.Rd(InstrD[15:12]),
+		.FlagW(FlagWriteD),
+		.PCS(PCSrcD),
+		.RegW(RegWriteD),
+		.MemW(MemWriteD),
+		.MemtoReg(MemtoRegD),
+		.ALUSrc(ALUSrcD),
+		.ALUControl(ALUControlD),
+		.ImmSrc(ImmSrcD),
+		.RegSrc(RegSrcD),
+		.Branch(BranchD)
+	);
 
-    // Etapa D
-    flopd D (
-        .clk(clk),
-        .PCSrcD(PCSrcD),
-        .RegWriteD(RegWriteD),
-        .MemtoRegD(MemtoRegD),
-        .MemWriteD(MemWriteD),
-        .ALUControlD(ALUControlD),
-        .BranchD(BranchD),
-        .ALUSrcD(ALUSrcD),
-        .FlagWriteD(FlagWriteD),
-        .Cond(Cond),
-        .Flags(Flags),
-        .PCSrcE(PCSrcE),
-        .RegWriteE(RegWriteE),
-        .MemtoRegE(MemtoRegE),
-        .MemWriteE(MemWriteE),
-        .ALUControlE(ALUControlE),
-        .BranchE(BranchE),
-        .ALUSrcE(ALUSrcE),
-        .FlagWriteE(FlagWriteE),
-        .CondE(CondE),
-        .FlagsE(FlagsE)
-    );
+	//registro entre decode y execute
+	flopr #(14) RegDecExec(
+		.clk(clk), .reset(reset),
+		.d({PCSrcD, RegWriteD, MemtoRegD, MemWriteD, ALUControlD, BranchD, ALUSrcD, FlagWriteD}),  
+		.q({PCSrcE, RegWriteE, MemtoRegE, MemWriteE, ALUControlE, BranchE, ALUSrcE, FlagWriteE})
+	);
 
-     condlogic cl(
-    		.clk(clk),
-    		.reset(reset),
-    		.Cond(CondE),
-    		.ALUFlags(ALUFlags),
-    		.FlagW(FlagWriteE),
-    		.PCS(PCSrcE),
-    		.RegW(RegWriteE),
-    		.MemW(MemWriteE),
-    		.PCSrc(PCSrcEpostCondLogic),
-    		.RegWrite(RegWriteEpostCondLogic),
-    		.MemWrite(MemWriteEpostCondLogic),
-    		.Branch(BranchE),
-    		.BranchTakenE(BranchTakenE),
-    		.FlagsE(FlagsE),
-    		.FlagsNext(FlagsNext)
-    );
+	//registro para ALUFlags
+	flopr #(4) RegALUFlags (
+		.clk(clk), 
+		.reset(reset), 
+		.d(FlagsNext), 
+		.q(FlagsE)
+	);
 
-    flope E (
-        .clk(clk),
-        .PCSrcE(PCSrcE),
-        .RegWriteE(RegWriteE),
-        .MemtoRegE(MemtoRegE),
-        .MemWriteE(MemWriteE),
-        .PCSrcM(PCSrcM),
-        .RegWriteM(RegWriteM),
-        .MemtoRegM(MemtoRegM),
-        .MemWriteM(MemWriteM)
-    );
+	condlogic cl (
+		.clk(clk),
+		.reset(reset),
+		.Cond(CondE),
+		.ALUFlags(ALUFlags),
+		.FlagW(FlagWriteE),
+		.PCS(PCSrcE),
+		.RegW(RegWriteE),
+		.MemW(MemWriteE),
+		.PCSrc(CondPCSrcE),
+		.RegWrite(CondRegWriteE),
+		.MemWrite(CondMemWriteE),
+		.Branch(BranchE),
+		.BranchTakenE(BranchTakenE),
+		.FlagsE(FlagsE),
+		.FlagsNext(FlagsNext)
+	);
 
-    flopm M (
-        .clk(clk),
-        .PCSrcM(PCSrcM),
-        .RegWriteM(RegWriteM),
-        .MemtoRegM(MemtoRegM),
-        .PCSrcW(PCSrcW),
-        .RegWriteW(RegWriteW),
-        .MemtoRegW(MemtoRegW)
-    );
+	//registro entre execute y memory
+	flopr #(4) RegExecMem(
+		.clk(clk), 
+		.reset(reset), 
+		.d({CondPCSrcE, CondRegWriteE, MemtoRegE, CondMemWriteE}), 
+		.q({PCSrcM, RegWriteM, MemtoRegM, MemWriteM})
+	);
 
-    assign RegWriteE = RegWriteE & CondExE;
-    assign PCSrcE = (BranchE & CondExE) | (PCSrcE & CondExE);
-    assign MemWriteE = MemWriteE & CondExE;
+	//registro entre memory y writeback
+	flopr #(4) RegMemWB (
+		.clk(clk), 
+		.reset(reset), 
+		.d({PCSrcM, RegWriteM, MemtoRegM}), 
+		.q({PCSrcW, RegWriteW, MemtoRegW})
+	);
+
 endmodule
