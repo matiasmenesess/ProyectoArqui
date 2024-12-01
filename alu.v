@@ -25,6 +25,27 @@ module alu (
             4'b1010: ALUResult = SrcA + SrcB + CarryIn;  // ADC
             4'b1011: ALUResult = SrcA - SrcB - ~CarryIn; // SBC
             4'b1100: ALUResult = SrcA * SrcB;            // MUL
+            //4'b1110: ALUResult = SrcA << SrcB[4:0];      // LSL
+            //4'b1111: ALUResult = SrcA >> SrcB[4:0];    // LSR
+            //4'b1101: ALUResult = (SrcA >> SrcB[4:0]) | (SrcA << (32 - SrcB[4:0]));  // ROR
+            // TST
+            //4'b1110: begin
+            //ALUResult = SrcA & SrcB;  // Operación AND
+            //ALUFlags = {ALUResult[31], (ALUResult == 32'b0), 2'b0};  // Solo actualiza los flags
+            //end
+
+            //TEQ
+            //4'b1111: begin
+            //ALUResult = SrcA ^ SrcB;  // Operación XOR
+            //ALUFlags = {ALUResult[31], (ALUResult == 32'b0), 2'b0};  // Solo actualiza los flags
+            //end
+
+
+
+
+            
+
+
             default: ALUResult = 32'b0;
         endcase
     end
