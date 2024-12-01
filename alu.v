@@ -6,6 +6,7 @@ module alu (
     input wire CarryIn,  
     output reg [31:0] ALUResult,
     output  [3:0] ALUFlags
+    //falta no write
 );
     wire [32:0] sum;  
 
