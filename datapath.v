@@ -18,6 +18,7 @@ module datapath (
     RD1D, 
     RD2D, 
     BranchTakenE,
+    BranchPredictor,
     MemtoRegE,
     Match_1E_M, // hazard
     Match_1E_W, 
@@ -59,6 +60,7 @@ module datapath (
     input wire clk;
     input wire reset;
     input wire BranchTakenE;
+    input wire BranchPredictor;
     input wire [1:0] RegSrcD;
     input wire [1:0] ForwardAE, ForwardBE;
     input wire MemtoRegE, StallF, StallD, FlushE;
@@ -93,7 +95,7 @@ module datapath (
     mux2 #(32) MUX_2PC(
         .d0(PCNext),
         .d1(ALUResultE),
-        .s(BranchTakenE),
+        .s(BranchPredictor),
         .y(PC)
     );
 
@@ -111,11 +113,13 @@ module datapath (
         .y(PCPlus4F)
     );
     
-    flopr #(32) RegFToD (
+    flopenrCLR #(32) RegFToD (
         .clk(clk),
         .reset(reset),
         .d(InstrF),
-        .q(InstrD)
+        .q(InstrD),
+        .en(~StallD),
+        .clr(FlushD)
     );
     
     //decode
@@ -270,8 +274,7 @@ module datapath (
         .d1(ReadDataW), 
         .s(MemtoRegW), 
         .y(ResultW)
-    );  
-	
+    );    
     //hazard .forwarding
     assign Match_1E_M = (RA1E == WA3M);
     assign Match_1E_W = (RA1E == WA3W);
