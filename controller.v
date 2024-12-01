@@ -15,8 +15,10 @@ module controller (
 	PCSrcW, 
 	BranchTakenE,
 	PCSrcD,
+	BranchPredictor,
     PCSrcE,
-   	PCSrcM
+   	PCSrcM,
+   	FlushE
 );
 
 	input wire clk;
@@ -36,6 +38,7 @@ module controller (
 	output wire PCSrcE; 
 	output wire PCSrcD;
 	output wire BranchTakenE;
+	output wire BranchPredictor;
 	output wire MemtoRegE;
 	wire RegWriteD;
 	wire MemWriteD; 
@@ -51,6 +54,7 @@ module controller (
 	wire CondMemWriteE;
 	wire BranchE;
 	wire ALUSrcE;
+	input wire FlushE;
 	wire [1:0] FlagWriteE;
 	wire [3:0] CondE;
 	wire FlagsE;
@@ -75,10 +79,11 @@ module controller (
 	);
 
 	//registro entre decode y execute
-	flopr #(14) RegDecExec(
+	floprCLR #(14) RegDecExec(
 		.clk(clk), .reset(reset),
 		.d({PCSrcD, RegWriteD, MemtoRegD, MemWriteD, ALUControlD, BranchD, ALUSrcD, FlagWriteD}),  
-		.q({PCSrcE, RegWriteE, MemtoRegE, MemWriteE, ALUControlE, BranchE, ALUSrcE, FlagWriteE})
+		.q({PCSrcE, RegWriteE, MemtoRegE, MemWriteE, ALUControlE, BranchE, ALUSrcE, FlagWriteE}),
+		.clr(FlushE)
 	);
 
 	//registro para ALUFlags
@@ -104,6 +109,7 @@ module controller (
 		.Branch(BranchE),
 		.BranchTakenE(BranchTakenE),
 		.FlagsE(FlagsE),
+		.BranchPredictor(BranchPredictor),
 		.FlagsNext(FlagsNext)
 	);
 
