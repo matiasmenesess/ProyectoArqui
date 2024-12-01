@@ -48,8 +48,10 @@ module hazard_unit(
     
     assign LDRStall = Match_12D_E & MemtoRegE;
     assign StallF = LDRStall | PCWrPendingF;
+    
     assign PCWrPendingF = PCSrcD | PCSrcE | PCSrcM;
     assign FlushD = PCWrPendingF | PCSrcW | BranchTakenE;
     assign FlushE = LDRStall | BranchTakenE;
     assign StallD = LDRStall;
+    
 endmodule
