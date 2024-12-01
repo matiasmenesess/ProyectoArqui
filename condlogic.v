@@ -12,6 +12,7 @@ module condlogic (
 	MemWrite,
 	Branch,
 	BranchTakenE,
+	BranchPredictor,
 	FlagsE,
 	FlagsNext
 );
@@ -58,5 +59,16 @@ module condlogic (
 	assign PCSrc = PCS & CondEx;
 	assign BranchTakenE = Branch & CondEx;
 	assign FlagsNext = Flags;
+	
+	output wire BranchPredictor;
+	
+	fsm BP1B(
+	 .clk(clk),
+	 .reset(reset), 
+	 .ipt(BranchTakenE), 
+	 .otpt(BranchPredictor)
+	);
+	  
+	   
 	
 endmodule
