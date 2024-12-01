@@ -39,6 +39,9 @@ module alu (
             //ALUFlags = {ALUResult[31], (ALUResult == 32'b0), 2'b0};  // Solo actualiza los flags
             //end
 
+            //4'b1100: ALUResult = SrcA & ~SrcB;  // BIQ
+
+
 
 
 
