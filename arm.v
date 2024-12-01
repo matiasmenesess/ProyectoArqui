@@ -28,9 +28,10 @@ module arm (
 	wire [1:0] ALUControl;
 	wire [31:0] ExtImm;
 	wire BranchTakenE;
+	wire BranchPredictor;
 	wire Match_1E_M, Match_1E_W, Match_2E_M, Match_2E_W;
-    	wire [1:0] ForwardAE, ForwardBE;
-    	wire Match_12D_E, FlushE, StallF, StallD;
+    wire [1:0] ForwardAE, ForwardBE;
+    wire Match_12D_E, FlushE, StallF, StallD;
    	wire [31:0] RD1D; //rd2 del decode
 	wire [31:0] RD2D;  //rd1 del decode
 	
@@ -50,9 +51,11 @@ module arm (
 		.MemtoRegW(MemtoReg),
 		.PCSrcW(PCSrc),
 		.PCSrcE(PCSrcE),
-        	.PCSrcD(PCSrcD),
-        	.PCSrcM(PCSrcM),
-		.MemtoRegE(MemtoRegE)
+        .PCSrcD(PCSrcD),
+        .PCSrcM(PCSrcM),
+		.MemtoRegE(MemtoRegE),
+		.FlushE(FlushE),
+		.BranchPredictor(BranchPredictor)
 	);
 	
 	datapath dp(
@@ -73,13 +76,14 @@ module arm (
 		.ReadDataM(ReadData),
 		.ExtImmD(ExtImm), 
 		.BranchTakenE(BranchTakenE),
+		.BranchPredictor(BranchPredictor),
 		.Match_1E_M(Match_1E_M), 
-        	.Match_1E_W(Match_1E_W), 
-        	.Match_2E_M(Match_2E_M), 
-        	.Match_2E_W(Match_2E_W),
-        	.Match_12D_E(Match_12D_E),
-        	.ForwardAE(ForwardAE), 
-        	.ForwardBE(ForwardBE),
+        .Match_1E_W(Match_1E_W), 
+        .Match_2E_M(Match_2E_M), 
+        .Match_2E_W(Match_2E_W),
+        .Match_12D_E(Match_12D_E),
+        .ForwardAE(ForwardAE), 
+        .ForwardBE(ForwardBE),
 		.StallF(StallF),
 		.StallD(StallD),
 		.RD1D(RD1D), 
